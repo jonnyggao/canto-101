@@ -79,10 +79,20 @@ def transform_content(fragment: str) -> str:
         r'src="pic/', 'src="assets/original/pic/', fragment, flags=re.I
     )
     fragment = re.sub(
-        r'src="line\.gif"', 'src="assets/original/line.gif"', fragment, flags=re.I
+        r'src="star\.png"', 'src="assets/original/star.png"', fragment, flags=re.I
+    )
+    # Remove decorative line.gif rows (spacing handled in CSS)
+    fragment = re.sub(
+        r'(?:<br\s*/?>\s*)*<div[^>]*>\s*(?:<img[^>]*(?:line\.gif)[^>]*>\s*)+</div>\s*(?:<br\s*/?>\s*)*',
+        "\n",
+        fragment,
+        flags=re.I,
     )
     fragment = re.sub(
-        r'src="star\.png"', 'src="assets/original/star.png"', fragment, flags=re.I
+        r'<img[^>]*(?:line\.gif)[^>]*>\s*',
+        "",
+        fragment,
+        flags=re.I,
     )
     # Fix missing hash in inline colors
     fragment = re.sub(
@@ -122,7 +132,7 @@ def link_index_units(fragment: str) -> str:
 
 def collect_asset_paths(html: str) -> set[str]:
     paths: set[str] = set()
-    for m in re.finditer(r'src="(pic/[^"]+|line\.gif|star\.png|Banner\.png)"', html, re.I):
+    for m in re.finditer(r'src="(pic/[^"]+|star\.png|Banner\.png)"', html, re.I):
         paths.add(m.group(1).replace("\\", "/"))
     return paths
 
@@ -137,7 +147,7 @@ def page_shell(*, title: str, nav_id: str, body: str) -> str:
   <title>{title} · Survival Cantonese</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/site.css" />
 </head>
 <body data-current="{nav_id}">
